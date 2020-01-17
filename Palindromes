@@ -1,0 +1,15 @@
+palindrome_value = 0
+
+for i in range(999, 100, -1): 
+    for j in range(i, 100, -1):
+        x = i * j
+        if x > palindrome_value:
+            test_reverse = str(i * j)
+            if test_reverse == test_reverse[::-1]:
+                palindrome_value = i * j
+                print("A palindrome has been found: " + str(palindrome_value))
+                print("The first 3-digit number that corresponds to this palindrome is: " + str(i))
+                print("The second 3-digit number that corresponds to this palindrome is: " + str(j))
+                print('\n')
+                
+print("The largest palindrome that exists is: " + str(palindrome_value))
