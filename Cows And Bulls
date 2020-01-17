@@ -1,0 +1,31 @@
+import random
+
+my_sample = random.sample(range(10),4)        #generates random 4 digit sample from 0-9
+print(my_sample)
+
+guesses = 0
+
+bulls = 0
+
+while (bulls !=4):
+    i = 0
+    bulls = 0
+    cows = 0
+    user_choice = input("Please Enter Some Numbers: ")        #asks the user to enter a choice
+    for i in range(len(my_sample)):
+        if (my_sample[i] == int(user_choice[i*2])):         #test condition to see if there are bulls
+            bulls = bulls + 1
+        elif (str(my_sample[i]) in user_choice):            #test condition to see if there are cows
+            cows = cows + 1
+    print("There are " + str(bulls) + " bulls.")
+    print("There are " + str(cows) + " cows.")
+    
+    guesses = guesses + 1                                   #increments guesses
+    
+    if (guesses == 10 and bulls !=4):                                                 #condition if the user guesses the correct guess on the 10th try
+      print("You are out of guesses. The correct answer is: " + str(my_sample))
+      break
+      
+if bulls == 4:                                                                        #displays the results of the game
+  print("Congratulations! You have won the game.")
+  print("It took you " + str(guesses) + " guesses.")
