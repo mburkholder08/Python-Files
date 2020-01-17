@@ -1,0 +1,97 @@
+def a_counter():
+
+    name_string = input("Please type in a sentence: ")
+
+    count = 0
+
+    for i in name_string:
+        if i == 'a' or i == 'A':
+            count = count + 1
+        
+    print("There are: " + str(count) + " a's in this input.")
+    
+a_counter()
+
+def my_counter():
+    
+    name_string = input("Please type in a sentence: ")
+    
+    count_characters = {}
+    
+    for i in name_string:
+        if i in count_characters:
+            count_characters[i] += 1
+        else:
+            count_characters[i] = 1
+        
+    print(count_characters)
+
+my_counter()
+
+import requests
+
+website = requests.get("http://www.stat.uchicago.edu/~meiwang/courses/lincoln.txt")
+gettext = website.text
+print(gettext)
+
+def word_counter():
+
+    import requests
+
+    website = requests.get("http://www.stat.uchicago.edu/~meiwang/courses/lincoln.txt")
+
+    name_string = website.text
+
+    # This is counting some items that are not actually words but the program considers as words
+
+    count_words = len(name_string.split())
+
+    print("The number of words in this text file: " + str(count_words))
+    
+word_counter() 
+
+def top_five_words():
+
+    import requests
+
+    from collections import Counter
+
+    website = requests.get("http://www.stat.uchicago.edu/~meiwang/courses/lincoln.txt")
+
+    name_string = website.text
+
+    split_data = name_string.split()
+
+    Counter = Counter(split_data)
+
+    top_words = Counter.most_common(5)
+
+    print(top_words)
+
+top_five_words()
+
+import requests
+
+website = requests.get("http://www.stat.uchicago.edu/~meiwang/courses/lincoln.txt")
+
+name_string = website.text
+
+if "seven years ago" in name_string:
+    print("True")
+else:
+    print("False")
+
+if "eight years ago" in name_string:
+    print("True")
+else:
+    print("False")
+    
+if "hello world" in name_string:
+    print("True")
+else:
+    print("False")
+    
+if "birth of freedom" in name_string:
+    print("True")
+else:
+    print("False")
