@@ -1,0 +1,184 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Dec  2 21:33:49 2019
+
+@author: mburk
+"""
+
+import pandas as pd
+from collections import Counter
+import string
+import numpy as np
+from scipy import stats
+
+
+## 2a Importing the Text Files ##
+with open("textA.txt") as input_fileA:
+    countA = Counter(word for line in input_fileA 
+                    for word in line.split())
+    
+with open("textB.txt") as input_fileB:
+    countB = Counter(word for line in input_fileB 
+                    for word in line.split())
+    
+with open("textA.txt") as openA:
+    linesA = openA.read()
+gettingA = linesA.split()
+
+with open("textB.txt") as openB:
+    linesB = openB.read()
+gettingB = linesB.split()
+    
+## 2b Most Frequent Words ##
+ListA = (countA.most_common(9))
+ListB = (countB.most_common(9))
+
+print(ListA)
+print(ListB)
+
+       #empty sets to append into
+
+word_countA = []
+word_countB = []
+
+table_titleA = []
+table_titleB = []
+
+frequencyA = []
+frequencyB = []
+
+
+for i in range(9):
+    word_countA.append(ListA[i][1])
+    word_countB.append(ListB[i][1])
+    
+    table_titleA.append(ListA[i][0])
+    table_titleB.append(ListB[i][0])
+    
+    frequencyA.append(ListA[i][1]/1000)
+    frequencyB.append(ListB[i][1]/1000)
+
+print(table_titleA)
+print(word_countA)
+print(frequencyA)
+
+print(table_titleB)
+print(word_countB)
+print(frequencyB)
+
+## 2b Data Tables ##
+
+dfA = pd.DataFrame([word_countA,frequencyA],index=['Word Count','Word Frequency'],columns = table_titleA)
+print(dfA)
+
+dfB = pd.DataFrame([word_countB,frequencyB],index=['Word Count','Word Frequency'],columns = table_titleB)
+print(dfB)
+
+## 2c 5 Words After That ##
+
+strippingA = [''.join(words for words in lines if words not in string.punctuation) for lines in gettingA]
+strippingB = [''.join(words for words in lines if words not in string.punctuation) for lines in gettingB]
+
+indexingA = [i for i, x in enumerate(strippingA) if x == 'that']
+indexingB = [i for i, x in enumerate(strippingB) if x == 'that']
+
+finding_thatA = [] #empty sets to append into
+finding_thatB = []
+
+for i in indexingA:
+    finding_thatA.append(strippingA[i+1])
+    
+for i in indexingB:
+    finding_thatB.append(strippingB[i+1])
+    
+that_counterA = Counter(finding_thatA)
+that_counterB = Counter(finding_thatB)
+
+that_listA = sorted(that_counterA.items(), key = lambda x: x[1], reverse=True)[0:5]
+that_listB = sorted(that_counterB.items(), key = lambda x: x[1], reverse=True)[0:5]
+
+print(that_listA)
+print(that_listB)
+
+## 2d 5 Words Not in Stop List ##
+
+with open("stopwords.txt") as openStop:
+    linesStop = openStop.read()
+gettingStop = linesStop.split(',') + linesStop.title().split(',')
+
+
+list_stopA = [x for x in strippingA if x not in gettingStop]
+list_stopB = [x for x in strippingB if x not in gettingStop]
+
+counter_stopA = Counter(list_stopA)
+counter_stopB = Counter(list_stopB)
+
+sorted_list_stopA = sorted(counter_stopA.items(), key = lambda x: x[1], reverse=True)
+sorted_list_stopB = sorted(counter_stopB.items(), key = lambda x: x[1], reverse=True)
+
+print(sorted_list_stopA[0:5])
+print(sorted_list_stopB[0:5])
+
+## 2e Finding Common Words of Both Texts ##
+
+common_in_both = [] #empty set to append into
+
+for common in [x[0] for x in sorted_list_stopA]:
+    if common in [x[0] for x in sorted_list_stopB]:
+        common_in_both.append(common)
+
+common_in_A = [x for x in sorted_list_stopA if x[0] in common_in_both]
+print(common_in_A[0:5])
+
+common_in_B = [x for x in sorted_list_stopB if x[0] in common_in_both]
+print(common_in_B[0:5])
+
+##Comments: The words that are most frequent in the common word list for list
+##          A will differ from the most frequent in B, as evidenced above.
+
+## To solve this issue, ie, to get the "true count" of every word in both text 
+## files, we will want to join the two together and then remove the stop words
+## and then count them in a similar way as we have done above
+## From there, we can see how frequently these top five words appear individually
+## in each text file and run statistical methods onto this information
+
+##2g Top 5 common words in the two texts ##
+
+## Lets add the two files together and count
+
+all_common_words = strippingA + strippingB
+
+all_common_words_no_stop = [x for x in all_common_words if x not in gettingStop]
+
+all_common_words_no_stop = [x for x in all_common_words_no_stop if x in common_in_both]
+
+all_common_words_no_stop = Counter(all_common_words_no_stop)
+
+all_sorted_no_stop = sorted(all_common_words_no_stop.items(), key = lambda x: x[1], reverse=True)
+print(all_sorted_no_stop[0:5])
+
+## Now that we have the count of the true top 5 words in both texts,
+## lets see how often they appear in each of the files
+
+top_words = ['one', 'up', 'out', 'Mr', 'upon']
+
+get_top_word_countA = [x for x in sorted_list_stopA if x[0] in top_words]
+get_top_word_countB = [x for x in sorted_list_stopB if x[0] in top_words]
+print(get_top_word_countA)
+print(get_top_word_countB)
+
+## We have now printed out the distribution of the true top 5 words for both of the files
+
+one = [356, 331]
+up = [280, 300]
+out = [262, 315]
+Mr = [238, 271]
+upon = [462, 24]
+
+chi_squared = np.array([one,up,out,Mr,upon])
+chi_squared_soln = stats.chi2_contingency(chi_squared)
+
+print(chi_squared_soln)
+
+## The p-value of this chi-squared test is extremely small,
+## so we can use these results with confidence
